@@ -8,9 +8,6 @@ This is a Spring Boot project for managing user details.
     - [Installation](#installation)
 - [Usage](#usage)
     - [Endpoints](#endpoints)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Getting Started
 
