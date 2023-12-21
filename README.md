@@ -21,7 +21,7 @@ This is a Spring Boot project for managing user details.
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/user-details-service.git
+   git clone https://github.com/ranveer-kumar/user-details-service.git
    cd user-details-service
    ```
 
