@@ -1,0 +1,276 @@
+openapi: "3.0.0"
+info:
+  version: 0.0.1
+  title: "User-Details-Service"
+tags:
+  - name: UserDetailsAPI
+paths:
+  /actuator/health:
+    get:
+      summary: Check the health of the service
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+
+  /api/userdetails/{userId}:
+    get:
+      summary: Get User details by userId
+      operationId: getUserDetails
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsResponse'
+        '404':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/userdetails/{firstName}/{lastName}:
+    get:
+      summary: Get user details by first name and last name
+      operationId: getUserDetailsByFirstNameLastName
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: firstName
+          schema:
+            type: string
+          required: true
+          description: First name
+        - in: path
+          name: lastName
+          schema:
+            type: string
+          required: true
+          description: Last name
+      responses:
+        '200':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+        '404':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/userdetails:
+    get:
+      summary: Get paginated user details
+      operationId: getAllUsersDetail
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: pageNo
+          schema:
+            type: integer
+            default: 0
+          description: Page number
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 10
+          description: Offset of the page
+      responses:
+        '200':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResponse'
+        '404':
+          description: Status:"OK" if service is up and running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/userdetails/{empId}:
+    patch:
+      summary: Partially update user details by user ID
+      operationId: patchUserDetails
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: empId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to update
+      requestBody:
+        description: Updated user details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetailsPatchRequest'
+      responses:
+        '204':
+          description: User details updated successfully
+        '404':
+          description: Not Found if the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthCheckResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "UP"
+    UserDetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserDetailsResponse'
+    UserDetailsResponse:
+      type: object
+      properties:
+        empId:
+          type: integer
+        title:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAddressResponse'
+    UserAddressResponse:
+      type: object
+      properties:
+        addressId:
+          type: integer
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postcode:
+          type: integer
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The status code for the error response
+                example: 404
+              description:
+                type: string
+                description: The description for the error response
+                example: Not Found
+              severity:
+                type: string
+                description: The severity of the error response
+                example: ERROR
+    UserDetailsPatchRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAddressRequest'
+    UserAddressRequest:
+      type: object
+      properties:
+        addressId:
+          type: integer
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postcode:
+          type: integer
+    PageMetadata:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+      required:
+        - totalPages
+        - totalElements
+        - size
+        - number
+        - numberOfElements
+        - first
+        - last
+
+    PageResponse:
+      type: object
+      properties:
+#        metadata:
+#          $ref: '#/components/schemas/PageMetadata'
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserDetailsResponse'
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+      required:
+        - metadata
+        - content
+
+

@@ -1,0 +1,60 @@
+server:
+  port: '8080'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    circuitbreakers:
+      enabled: 'true'
+    ratelimiters:
+      enabled: 'true'
+  endpoint:
+    health:
+      show-details: always
+spring:
+  application:
+    name: user-details-service
+  datasource:
+    driverClassName: org.h2.Driver
+    password: ''
+    username: sa
+    url: jdbc:h2:mem:userdb
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: 'true'
+  jpa:
+    defer-datasource-initialization: 'true'
+    show-sql: 'true'
+    database-platform: org.hibernate.dialect.H2Dialect
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        waitDurationInOpenState: 5s
+        failureRateThreshold: '50'
+        permittedNumberOfCallsInHalfOpenState: '3'
+        automaticTransitionFromOpenToHalfOpenEnabled: 'true'
+        minimumNumberOfCalls: '5'
+        eventConsumerBufferSize: '10'
+        slidingWindowSize: '10'
+        registerHealthIndicator: 'true'
+  ratelimiter:
+    instances:
+      simpleRateLimit:
+        limitForPeriod: 1
+        limitRefreshPeriod: 10s
+        timeoutDuration: 5s
+        #
+        registerHealthIndicator: true
+        allowHealthIndicatorToFail: true
+
+#        eventConsumerBufferSize: 10
+
+
